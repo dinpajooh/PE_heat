@@ -53,9 +53,13 @@ the LAMMPS scripts, namely in.PEequil and in.PEprod.
 ################################
 
 If you want to run the molecular dynamics simulations simply run:
+
 1- lammps < in.PEequil > Outequil
+
 2- mv FINALCONFIG RESTART
+
 3- lammps < in.PEprod > Outprod
+
 where lammps is the executable of the LAMMMPS software program.
 Note that we use the version of LAMMPS released at 16 Mar 2018.
 
