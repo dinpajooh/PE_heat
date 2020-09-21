@@ -1,5 +1,6 @@
 # PE_heat
 The LAMMPS scripts, analysis codes and relevant simulation data
+for studying heat conduction in polyethylene polymer chains 
 are provided in the following directories.
 
 The directories are named as NX, where X refers to the chain length.
