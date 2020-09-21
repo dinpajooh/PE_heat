@@ -61,7 +61,7 @@ If you want to run the molecular dynamics simulations simply run:
 3- lammps < in.PEprod > Outprod
 
 where lammps is the executable of the LAMMMPS software program.
-Note that we use the version of LAMMPS released at 16 Mar 2018.
+Note that we use the version of LAMMPS released on March 16, 2018.
 
 ##########################
 ####   OUTPUT FILES   ####
