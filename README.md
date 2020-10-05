@@ -71,6 +71,6 @@ Note that we use the version of LAMMPS released on March 16, 2018.
 Additionally, sample output files and analysis codes are provided:
 Heat current can be computed from the "log.lammps" file, where an analysis
 code (get_conductance.sh) is provided to obtain the heat conductance
-in pW/K units: simple run "bash get_conductance.sh"
+in pW/K units: simply run "bash get_conductance.sh"
 Temperature profiles can be obtained from the "profile.langevin" file.
 
