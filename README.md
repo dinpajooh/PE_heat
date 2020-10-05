@@ -5,7 +5,7 @@ are provided in the following directories.
 
 The directories named NX refer to junctions with the chain length of X.
 The directory named Gold-PE-Gold contains the input and output files 
-for a real gold-polyethylene-gold junctions.
+for a gold-polyethylene-gold junction.
 
 ##########################
 ####   INPUT FILES   #####
