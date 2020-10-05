@@ -3,8 +3,9 @@ The LAMMPS scripts, analysis codes and relevant simulation data
 for studying heat conduction in polyethylene polymer chains 
 are provided in the following directories.
 
-The directories are named as NX, where X refers to the chain length.
-
+The directories named NX refer to junctions with the chain length of X.
+The directory named Gold-PE-Gold contains the input and output files 
+for a real gold-polyethylene-gold junctions.
 
 ##########################
 ####   INPUT FILES   #####
