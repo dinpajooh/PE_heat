@@ -5,7 +5,7 @@ are provided in the following directories.
 
 The directories named NX refer to junctions with the chain length of X.
 The directory named M-PE-M contains the input files 
-for a metal-polyethylene-metal junction.
+for metal-polyethylene-metal junctions consisting of Ag, Au, Cu, Ni, and Pt metal leads.
 
 ##########################
 ####   INPUT FILES   #####
