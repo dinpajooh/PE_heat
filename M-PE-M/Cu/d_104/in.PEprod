@@ -1,0 +1,153 @@
+#lammps script for united atom polymer simulation (full-scale run)
+
+# 1. INITIALIZATION
+#allows pair, bond, bending and dihedral interactions
+atom_style molecular
+
+  # periodic (video game) boundaries in all cartesian directions
+boundary p p s
+
+  # uses real units (instead of units based on pair potential parameters).  List of units used in manual
+units metal
+
+###########
+# 2. ATOM DEFINITION
+########## 
+
+   ##
+   # Read in data from starting configuration file
+   ##  
+
+#read_data lammps-AT-config  
+ 
+ #use to restart
+read_restart RESTART
+
+   ##
+   # Specify the nature of the bond interactions
+   ##
+
+bond_style harmonic
+bond_coeff 1 19.51 1.54
+bond_coeff 2 22.45 1.82
+bond_coeff 3 10000.0 2.0
+special_bonds lj 0.0 0.0 0.0 angle no dihedral no
+
+angle_style harmonic
+angle_coeff 1 2.683 114.00
+angle_coeff 2 2.683 114.40
+
+dihedral_style opls
+dihedral_coeff * 0.06071 -0.011743 0.1363628 0.0
+
+mass  1   14.00
+mass  2   32.06
+mass  3  63.550
+mass  4  63.550
+
+pair_style hybrid lj/cut 14.0 morse 14.0 eam
+pair_coeff 1 1 lj/cut 0.00395 3.95 14.0
+pair_coeff 2 2 lj/cut 0.01594 3.62 14.0
+pair_coeff 3 3 eam Cu_u3.eam
+pair_coeff 4 4 eam Cu_u3.eam
+pair_coeff 1 2 lj/cut 0.0000 3.785 14.0
+pair_coeff 1 3 lj/cut 0.00091 3.53 14.0
+pair_coeff 1 4 lj/cut 0.00000 3.53 14.0
+pair_coeff 2 3 morse 0.652 1.414 2.64 14.0
+pair_coeff 2 4 morse 0.000 1.414 2.64 14.0
+pair_coeff 3 4 lj/cut 0.00 2.934 14.0
+
+
+group freeze type 4
+fix startend freeze setforce 0.0 0.0 0.0
+
+
+
+################
+# 3.  Simulation Settings
+###############
+
+neighbor        2.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+
+
+# Define some variables 
+variable Lx          equal xhi-xlo   # Ang
+variable Ly          equal yhi-ylo   # Ang
+variable Lz          equal zhi-zlo   # Ang
+
+variable dz          equal ${Lz}/30  # Ang
+
+variable zzlo        equal zlo  # Ang
+variable zzhi        equal zhi  # Ang
+variable vol         equal ${Lx}*${Ly}*${Lz}  # Ang^3
+variable TEMP        equal 300.00 # K
+variable TThi        equal 320.00 # K
+variable TTlo        equal 280.00 # K
+variable dt          equal 0.00025 # ps
+
+timestep     ${dt}
+
+
+variable zlo1      equal -25.0
+variable zlo2      equal -10.0
+variable zhi1      equal 109.0
+variable zhi2      equal 124.0
+
+
+# heat layers
+
+region          hot  block  INF INF INF INF ${zlo1} ${zlo2}
+region          cold block INF INF INF INF ${zhi1} ${zhi2}
+compute         Thot all temp/region hot
+compute         Tcold all temp/region cold
+
+
+# Second Equilibration
+fix             1 all nve
+fix             hot all langevin ${TThi} ${TThi}  0.005 59804  tally yes
+fix             cold all langevin ${TTlo} ${TTlo} 0.005 287859 tally yes
+fix_modify      hot temp Thot
+fix_modify      cold temp Tcold
+
+variable        tdiff equal c_Thot-c_Tcold
+thermo_style    custom step c_Thot c_Tcold f_hot f_cold v_tdiff
+thermo            4000
+run             800000
+unfix 1
+
+
+# PRODUCTION
+
+fix             1 all nve
+fix             hot all langevin ${TThi} ${TThi}  0.005 59804  tally yes
+fix             cold all langevin ${TTlo} ${TTlo} 0.005 287859 tally yes
+fix_modify      hot temp Thot
+fix_modify      cold temp Tcold
+
+variable        tdiff equal c_Thot-c_Tcold
+thermo          4000
+
+dump gigo all atom 4000 dump.cords_xyz.dat
+dump_modify gigo scale no
+dump vfgigo all custom 4000 dump.velo.dat id vx vy vz fx fy fz
+
+# thermal conductivity calculation
+# # reset langevin thermostats to zero energy accumulation
+#
+compute         ke all ke/atom
+variable        temp atom c_ke/1.5/0.00008617333262
+
+fix             ave all ave/time 100 40 4000 v_tdiff ave running
+thermo_style    custom step temp c_Thot c_Tcold f_hot f_cold v_tdiff f_ave
+
+#compute         layers all chunk/atom bin/1d z lower 0.05 units reduced
+compute         layers all chunk/atom bin/1d z lower ${dz} units box
+fix             2 all ave/chunk  100 40 4000 layers v_temp file profile.langevin
+
+run             16000000
+
+write_restart FINALCONFIG
+
+#and everyone lived happily ever after, THE END

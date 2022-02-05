@@ -1,0 +1,61 @@
+#!/bin/bash
+#SBATCH --job-name="Ni-1.05"
+#SBATCH --output="N-L.%j.%N.out"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --mem=24G
+#SBATCH --account=upa142
+#SBATCH --export=ALL
+#SBATCH -t 48:00:00
+
+BD=$PWD
+cd $BD
+
+lammps=$HOME/lammps-heatflux/src/lmp_mpi
+
+
+# Works with mpi
+module purge
+module load cpu
+#Load module file(s) into the shell environment
+module load intel
+module load slurm
+####################
+
+module list
+#printenv
+
+
+
+
+cd $BD
+srun --mpi=pmi2  -n 4 $lammps < in.PEequil > OUTequil
+cp FINALCONFIG RESTART
+mkdir 0ns 
+cp dump.cords_xyz.dat  $BD/0ns/
+cp dump.velo.dat       $BD/0ns/
+cp log.lammps          $BD/0ns/
+cp FINALCONFIG         $BD/0ns/
+cp profile*            $BD/0ns/
+
+
+
+for ((K=1;K<=10;K++)); do
+    cd $BD
+    srun --mpi=pmi2  -n 4 $lammps < in.PEprod > OUTprod
+    mkdir ${K}ns
+    cp dump.cords_xyz.dat  $BD/${K}ns/
+    cp dump.velo.dat       $BD/${K}ns/
+    cp log.lammps          $BD/${K}ns/
+    cp FINALCONFIG         $BD/${K}ns/
+    cp profile*            $BD/${K}ns/
+    mv ${K}ns run${K}
+    cp FINALCONFIG RESTART
+done
+
+
+#rm -rf restart.dat.*
+#rm -rf dump* 
+
+exit
