@@ -4,7 +4,7 @@ for studying heat conduction in polyethylene polymer chains
 are provided in the following directories.
 
 The directories named NX refer to junctions with the chain length of X.
-The directory named M-PE-M contains the input and output files 
+The directory named M-PE-M contains the input files 
 for a metal-polyethylene-metal junction.
 
 ##########################
