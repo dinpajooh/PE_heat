@@ -3,7 +3,7 @@
 atom_style molecular
 
   # periodic (video game) boundaries in all cartesian directions
-boundary p p f
+boundary p p s
 
   # uses real units (instead of units based on pair potential parameters).  List of units used in manual
 units real

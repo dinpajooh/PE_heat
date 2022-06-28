@@ -6,7 +6,7 @@ LAMMPS (16 Mar 2018)
 atom_style molecular
 
   # periodic (video game) boundaries in all cartesian directions
-boundary p p f
+boundary p p s
 
   # uses real units (instead of units based on pair potential parameters).  List of units used in manual
 units real
@@ -23,7 +23,6 @@ units real
 
  #use to restart
 read_restart RESTART
-WARNING: Restart file used different boundary settings, using restart file values (../read_restart.cpp:789)
   orthogonal box = (-200.000 -200.000 0.000) to (200.000 200.000 124.000)
   2 by 2 by 7 MPI processor grid
   98 atoms
